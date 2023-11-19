@@ -13,29 +13,12 @@ import torch
 from transformers import AutoModelForCausalLM,AutoModelForSeq2SeqLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
 from peft import PeftConfig
 from peft import PeftModel
-from peft import LoraConfig, get_peft_model
-import torch
-from transformers import AutoModelForCausalLM,AutoModelForSeq2SeqLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
-from peft import prepare_model_for_kbit_training
 
 
-def print_trainable_parameters(model):
-  trainable_params=0
-  all_param=0
-  for _, param in model.named_parameters():
-    all_param +=param.numel()
-    if param.requires_grad:
-      trainable_params += param.numel()
-
-  print(
-      f"trainable params: {trainable_params} || all params:{all_param} || trainable:{100*trainable_params/all_param} "
-  )
 # Creating the flask application over here
 app = Flask(__name__)
 import os
-os.environ['TRANSFORMERS_CACHE'] = 'D:/MANMEET/DataMentor/model'
-
-MODEL_NAME = 'HuggingFaceH4/zephyr-7b-beta'
+os.environ['TRANSFORMERS_CACHE'] = 'D:/DataMentor/model'
 
 bnb_config=BitsAndBytesConfig(
     load_in_4bit=True,
@@ -48,18 +31,17 @@ bnb_config=BitsAndBytesConfig(
     bnb_4bit_compute_dtype=torch.bfloat16,
 )
 
+PEFT_MODEL="MANMEET75/Mistral-7B-v0.1-fine-tuned"
 
-PEFT_MODEL="MANMEET75/zephyr-7b-beta-fine-tuned"
 config=PeftConfig.from_pretrained(PEFT_MODEL)
 model=AutoModelForCausalLM.from_pretrained(
-    "mistralai/Mistral-7B-v0.1",
+    config.base_model_name_or_path,
     return_dict=True,
     quantization_config=bnb_config,
     device_map="auto",
     trust_remote_code=True,
+
 )
-
-
 
 tokenizer=AutoTokenizer.from_pretrained(config.base_model_name_or_path)
 tokenizer.pad_token = tokenizer.eos_token
@@ -68,7 +50,7 @@ model=PeftModel.from_pretrained(model,PEFT_MODEL)
 
 
 generation_config=model.generation_config
-generation_config.max_new_tokens=50
+generation_config.max_new_tokens=70
 generation_config.temperature = 0.2
 generation_config.top_p = 0.2
 generation_config.num_return_sequences=1
@@ -78,8 +60,8 @@ generation_config.eos_token_id = tokenizer.eos_token_id
 DEVICE = "cuda:0"
 def generate_response(question: str) -> str:
     prompt = f"""
-{question}
-
+<human>{question}
+<assistant>
     """.strip()
 
     encoding = tokenizer(prompt, return_tensors="pt").to(DEVICE)
@@ -92,10 +74,10 @@ def generate_response(question: str) -> str:
 
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-    assistant_start = ""
+    assistant_start = "<assistant>"
     response_start = response.find(assistant_start)
 
-    # Extracting text after the  tag
+    # Extracting text after the <assistant> tag
     assistant_text = response[response_start + len(assistant_start):].strip()
 
     # Find the index of the last dot in the extracted text
@@ -109,6 +91,7 @@ def generate_response(question: str) -> str:
     assistant_text = assistant_text.replace('"', '').replace(':', '')
 
     return assistant_text
+
 
 
 @app.route('/static/<path:filename>')
