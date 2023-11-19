@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Question Answering Web App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="/static/images/chatbot.png" rel="icon">
+</head>
+
+<body>
+    <div class="ChatWindow">
+        <img class="ChatItem-avatarImage" src="/static/images/artificial-intelligence.png" width="50">
+        <h1 class="chatbot-name">Infra<span style="color: #0f55bd;">Bot</span></h1>
+
+        <div id="chat-container">
+            <!-- <div class="ChatWindow"> -->
+            <!--  Starting of UI-->
+
+            <div class="ChatItem ChatItem--customer">
+                <div class="ChatItem-meta">
+                    <div class="ChatItem-avatar">
+                        <img class="ChatItem-avatarImage" src="/static/images/chatbot.png">
+                    </div>
+                </div>
+                <div class="ChatItem-chatContent">
+                    <div class="ChatItem-chatText">Hello! How can I assist you?</div>
+                    <div class="ChatItem-timeStamp"><strong>Chat Bot</strong> • Today</div>
+                </div>
+            </div>
+
+
+            <div class="ChatInput is-hidey">
+                <!-- <div class="ChatInput-input" contenteditable="true" placeholder="Type your message here..."></div> -->
+                &nbsp;<input type="text" id="question" placeholder="Ask your question..." name="question">
+                <!-- Updated 'name' attribute here -->
+
+            </div>
+
+
+            <!-- <button id="send-btn">Send</button> -->
+            <!-- ending of UI -->
+            <div id="chat-display">
+
+            </div>
+        </div>
+        <!-- </div> -->
+
+        <script>
+            $(document).ready(function () {
+                function appendMessage(sender, message) {
+                    $("#chat-display").append("<p><strong>" + sender + ": </strong>" + message + "</p>");
+                }
+
+                function askQuestion() {
+                    const question = $("#question").val().trim(); // Trim any leading/trailing spaces
+                    if (question === "") {
+                        return; // If the question is empty, don't proceed
+                    }
+
+                    const timestamp = new Date();
+                    const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    $('.ChatWindow').append(`
+            <div class="ChatItem ChatItem--expert">
+                <div class="ChatItem-meta">
+                    <div class="ChatItem-avatar">
+                        <img class="ChatItem-avatarImage" src="/static/images/bussiness-man.png">
+                    </div>
+                </div>
+                <div class="ChatItem-chatContent">
+                    <div class="ChatItem-chatText">${question}</div>
+                    <div class="ChatItem-timeStamp"><strong>Me</strong> · Today ${timeString}</div>
+                </div>
+            </div>
+        `);
+
+                    // Clear the input field after the question is asked
+                    $("#question").val("");
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/ask',
+                        data: JSON.stringify({ 'input': question }),
+                        contentType: 'application/json',
+                        success: function (response) {
+                            const timestamp = new Date();
+                            const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            $('.ChatWindow').append(`
+                    <div class="ChatItem ChatItem--customer">
+                        <div class="ChatItem-meta">
+                            <div class="ChatItem-avatar">
+                                <img class="ChatItem-avatarImage" src="/static/images/chatbot.png">
+                            </div>
+                        </div>
+                        <div class="ChatItem-chatContent">
+                            <div class="ChatItem-chatText">${response.answer}</div>
+                            <div class="ChatItem-timeStamp"><strong>Chat Bot</strong> • Today ${timeString}</div>
+                        </div>
+                    </div>
+                `);
+                            responsiveVoice.speak(response);
+                            // change the avatar over here
+
+                            // document.getElementById('answer').innerText = 'Answer: ' + response.answer;
+                            // document.getElementById('sources').innerText = 'Sources: ' + response.sources;
+                        },
+                        error: function (error) {
+                            console.error(error);
+                        }
+                    });
+                }
+
+                $("#send-btn").click(askQuestion);
+
+                $("#question").keypress(function (e) {
+                    if (e.which === 13) {
+                        askQuestion();
+                    }
+                });
+            });
+
+
+
+
+
+        </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- <input type="text" id="question" placeholder="Ask your question..." name="question"> Updated 'name' attribute here -->
+        <!-- <button onclick="askQuestion()">Submit</button> -->
+        <!-- <div id="answer"></div> -->
+
+
+</body>
+
+</html>
