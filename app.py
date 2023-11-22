@@ -13,6 +13,7 @@ import torch
 from transformers import AutoModelForCausalLM,AutoModelForSeq2SeqLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
 from peft import PeftConfig
 from peft import PeftModel
+print(torch.cuda.is_available())
 
 
 # Creating the flask application over here
@@ -21,7 +22,8 @@ import os
 os.environ['TRANSFORMERS_CACHE'] = 'D:/DataMentor/model'
 
 bnb_config=BitsAndBytesConfig(
-    load_in_4bit=True,
+    # load_in_4bit=True,
+    llm_int8_enable_fp32_cpu_offload=True,
     bnb_4bit_use_double_quant=True,
 
     # nf4 is the normal 4 bit format that is again provided by LoRa
