@@ -13,7 +13,7 @@
 ## Steps to Run it
 ### 1. Cloning the Repository
 ```bash
-git clone https://github.com/MANMEET75/Infrared-OpenAIChatBot.git
+git clone https://github.com/MANMEET75/DataMentor.git
 ```
 ### 2. Creating the virtual environment using anaconda
 ```bash
