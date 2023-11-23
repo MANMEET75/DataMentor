@@ -1,4 +1,5 @@
 # DataMentor
+<p>Turbocharge Your Data Science Interview Skills</p>
 <img src="static/images/demoimage.jpg">
 
 - Implemented an end-to-end Chatbot using the open-source model Mistral-7B-v0.1 from Hugging Face LLM provider. Initially, we acquired the model from Hugging Face and loaded it into a Jupyter notebook, leveraging a powerful 4-bit GPU.
