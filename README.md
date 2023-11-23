@@ -32,7 +32,7 @@ pip install -r requirements.txt
 
 
 
-## 6. Check the InfraBot
+## 6. Check the DataMentor
 ```bash
 python app.py
 ```
