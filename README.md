@@ -16,7 +16,7 @@ git clone https://github.com/MANMEET75/Infrared-OpenAIChatBot.git
 ```
 ### 2. Creating the virtual environment using anaconda
 ```bash
-conda create -p venv python=3.10 -y
+conda create -p venv python=3.11 -y
 ```
 
 ### 3. Activate the virtual environment
@@ -29,16 +29,7 @@ conda activate venv/
 pip install -r requirements.txt
 ```
 
-### 5. Run the following commands in your anaconda prompt one by one
-#### First Command
-```bash
-conda install -c pytorch faiss-cpu
-```
 
-#### Second Command
-```bash
-conda install -c conda-forge faiss
-```
 
 ## 6. Check the InfraBot
 ```bash
